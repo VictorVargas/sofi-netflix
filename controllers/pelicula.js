@@ -48,7 +48,49 @@ function guardarPelicula(req, res) {
     });
 }
 
+function actualizarPelicula(req, res) {
+    Pelicula.findByIdAndUpdate(req.params.id, res.body, {new:true}, (err, pelicula) => {
+        if(err){
+            res.status(500).send({
+                message: 'Error en el servidor',
+            });
+        }else{
+            if(pelicula){
+                res.status(200).send({
+                    pelicula: pelicula
+                });
+            }else{
+                res.status(404).send({
+                    message: 'No se pudo actualizar la pelicula',
+                });
+            }
+        }
+    });
+}
+
+function borrarPelicula(req, res){
+    Pelicula.findByIdAndRemove(req.params.id, (err, pelicula) => {
+        if(err){
+            res.status(500).send({
+                message: 'Error en el servidor',
+            });
+        }else{
+            if(pelicula){
+                res.status(200).send({
+                    pelicula: pelicula
+                });
+            }else{
+                res.status(404).send({
+                    message: 'No existe la pelicula que se envio',
+                });
+            }
+        }
+    });
+}
+
 module.exports = {
     listarPeliculas,
-    guardarPelicula
+    guardarPelicula,
+    actualizarPelicula,
+    borrarPelicula
 };
