@@ -18,6 +18,26 @@ function listarPeliculas(req, res) {
     });
 }
 
+function getPelicula(req, res) {
+    Pelicula.findById(req.params.id, (err, pelicula) => {
+        if(err){
+            res.status(500).send({
+                message: 'Error en el servidor',
+            });
+        }else{
+            if(pelicula){
+                res.status(200).send({
+                    pelicula: pelicula
+                });
+            }else{
+                res.status(404).send({
+                    message: 'No se pudo encontrar la pelicula',
+                });
+            }
+        }
+    });
+}
+
 function guardarPelicula(req, res) {
     let pelicula = new Pelicula();
     let params = req.body;
@@ -49,13 +69,22 @@ function guardarPelicula(req, res) {
 }
 
 function actualizarPelicula(req, res) {
-    Pelicula.findByIdAndUpdate(req.params.id, res.body, {new:true}, (err, pelicula) => {
+    Pelicula.findById(req.params.id, (err, pelicula) => {
         if(err){
             res.status(500).send({
                 message: 'Error en el servidor',
             });
         }else{
             if(pelicula){
+                let params = req.body;
+
+                pelicula.nombre = params.nombre;
+                pelicula.genero = params.genero;
+                pelicula.fecha = params.fecha;
+                pelicula.trash = params.trash;
+                pelicula.etiquetas = params.etiquetas;
+                pelicula.save();
+
                 res.status(200).send({
                     pelicula: pelicula
                 });
@@ -90,6 +119,7 @@ function borrarPelicula(req, res){
 
 module.exports = {
     listarPeliculas,
+    getPelicula,
     guardarPelicula,
     actualizarPelicula,
     borrarPelicula
